@@ -13,14 +13,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.validation.BindingResult;
 import jakarta.validation.Valid;
-import it.pizzeriarelazioni.model.Pizza;
+
+import it.pizzeriarelazioni.model.Ingrediente;
+import it.pizzeriarelazioni.repository.IngredienteRepository;
 import it.pizzeriarelazioni.repository.PizzaRepository;
+import it.pizzeriarelazioni.model.Pizza;
 
 @Controller
 public class PizzaController {
 
 	@Autowired
 	private PizzaRepository repositoryPizza;
+	
+	@Autowired
+	private IngredienteRepository repositoryIngrediente;
 		
 	 @GetMapping("/index")
 	 public String pizzaByName(Model model, @RequestParam(name = "name", required = false) String name) {
@@ -48,6 +54,10 @@ public class PizzaController {
 	@GetMapping("/index/insert")
 	public String aggiungiPizza(Model model) {
 		
+		List<Ingrediente> listIngredienti = repositoryIngrediente.findAll();
+		
+	    model.addAttribute("ingredienti", listIngredienti);
+	    
 	    model.addAttribute("formPizza", new Pizza());
 	    
 	    return "insert"; 
@@ -55,19 +65,24 @@ public class PizzaController {
 	
 	
 	@PostMapping("/index/insert")
-	public String storePizza( @Valid @ModelAttribute("formPizza") Pizza formPizza, BindingResult bindingResult, Model model){
+	public String storePizza(@Valid @ModelAttribute("formPizza") Pizza formPizza, BindingResult bindingResult, Model model){
 		
 	   if(bindingResult.hasErrors()) {
 	      return "insert";
 	   }
 
 	   repositoryPizza.save(formPizza);
+	  
 
 	   return "redirect:/index";
 	}
 	
 	@GetMapping("/index/edit/{id}")
 	public String edit(@PathVariable("id") Integer id, Model model) {
+		
+		List<Ingrediente> listIngredienti = repositoryIngrediente.findAll();
+		
+	    model.addAttribute("ingredienti", listIngredienti);
 		
 		model.addAttribute("formPizza", repositoryPizza.findById(id).get());
 		

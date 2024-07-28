@@ -45,7 +45,7 @@ public class OffertaController {
 	
 	
 	@PostMapping("/index/insert-offerta/{id}")
-	public String storeOfferta(@Valid @ModelAttribute("offertaForm") Offerta offertaForm, BindingResult bindingResult, Model model) {
+	public String storeOfferta(@Valid @ModelAttribute("offertaForm") Offerta offertaForm, BindingResult bindingResult, Model model, @PathVariable("id") int pizzaId) {
 		
 		if(bindingResult.hasErrors()) {
 			return "insert-offerta";
